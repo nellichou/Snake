@@ -10,7 +10,7 @@
 #define HAUTEUR 42
 
 /*La fonction ecranPrincipal créé la fenêtre du jeu*/
-void ecranPrincipal(char* c, char* s) {
+void ecranPrincipal(char* c, char* s, char* x) {
 
 	int i,j;
 
@@ -20,6 +20,7 @@ void ecranPrincipal(char* c, char* s) {
 
 	EcrireTexte(10,900,c,2);
 	EcrireTexte(1100,900,s,2);
+	EcrireTexte(600,900,x,2);
 	
 }
 
@@ -187,7 +188,7 @@ void deplaceTete(grille* g, int i, int j, int direction, int nb_case) {
 
 /* fonction pour mettre à jour la structure avec le score */
 void majScore(grille* g) {
-	int k,l,ok;
+	int z,i,k,l,ok;
 	k = (rand()%59)+1; /* largeur entre 0 et 60*/
 	l = (rand()%39)+1; /* hauteur entre 0 et 40*/
 	g->nb_pommes ++;
@@ -197,11 +198,20 @@ void majScore(grille* g) {
 	/* on ajoute une nouvelle pomme */
 	/* on test que l'on apparait pas sur le snake */
 	ok=1;
+	srand(time(NULL));
 	while(ok) {
-		if(g->gr[k][l]==2) {
-			srand(time(NULL));
+
+		z=0;
+		/* on test que le random n'envoi pas sur le snake et pose la pomme avec au moins 5 case d'ecart */
+		for(i=0;i<5;i++) {
+			if(g->gr[k-i][l]!=0 || g->gr[k+i][l]!=0 || g->gr[k][l-i]!=0 || g->gr[k][l+i]!=0) {
+				z++;
+			}
+		}
+		if(z!=0) {
 			k = (rand()%59)+1; /* largeur entre 0 et 60*/
 			l = (rand()%39)+1; /* hauteur entre 0 et 40*/
+		
 		}
 		else {
 			g->gr[k][l] = 1;
@@ -210,11 +220,10 @@ void majScore(grille* g) {
 	}
 
 	
-		/*Toutes les trois pommes on augmente la vitesse du snake en diminuant le cycle*/
+		/*Toutes les trois pommes, on augmente la vitesse du snake en diminuant le cycle*/
 	
 	if(g->nb_pommes%3 == 0 && g->cycle >= 35000) {
-		printf("accélération\n");
-		g->cycle=g->cycle-10000;
+		g->cycle=g->cycle-5000;
 	}
 }
 
@@ -390,29 +399,11 @@ void majGrille(grille* g, int touche) {
 }
 
 
-/* 0: vert , 1: pomme, 2 : snake
- Sert à afficher la grille dans la console pour debug*/
-void afficheGrilleTxt(grille* g) {
-
-	int i, j;
-	/* on affiche le snake et les pommes */
-	for(i=0; i<LARGEUR; i++){
-		printf("| ");
-		for(j=0; j<HAUTEUR; j++){
-			printf("%d |",g->gr[i][j]);
-		}
-		printf("\n");
-	}
-
-}
-
 
 /* 0: vert , 1: pomme, 2 : snake */
 void afficheGrille(grille* g, int pomme, int tete, int terrain) {
 
 	int i, j;
-	/*ChoisirCouleurDessin(0x4eb164);
-	RemplirRectangle(40, 40, 1200, 800);*/
 	AfficherSprite(terrain,40,40);
 
 	/* on affiche le snake et les pommes */
@@ -420,19 +411,11 @@ void afficheGrille(grille* g, int pomme, int tete, int terrain) {
 		for(j=0; j<HAUTEUR; j++){
 
 			if( g->gr[i][j] == 1 ) {
-				/*ChoisirCouleurDessin(0xee111c);
-				RemplirRectangle(i*20+20, j*20+20, 20, 20);*/
 				AfficherSprite(pomme,i*20+20, j*20+20);
 			}
 			else if( g->gr[i][j] == 2 ) {
-				/*ChoisirCouleurDessin(0xffd700);
-				RemplirRectangle(i*20+20, j*20+20, 20, 20);*/
 				AfficherSprite(tete, i*20+20, j*20+20);
 			}
-			/*else if( g->gr[i][j] == 0 ) {
-				ChoisirCouleurDessin(0x4eb164);
-				RemplirRectangle(i*20+20, j*20+20, 20, 20);
-			}*/
 		}
 	}
 
