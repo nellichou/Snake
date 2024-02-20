@@ -5,11 +5,11 @@
 #include "fonctions.h"
 
 
+
 #define LARGEUR 60
 #define HAUTEUR 40
 
 #define CYCLE 1000000L
-/*#define CYCLE_GRILLE 100000L*/
 
 int main(void) {
 
@@ -33,20 +33,16 @@ int main(void) {
 	
 	/* initialise la grille de jeu */
 	initGrille(&grd);
-	/*afficheGrilleTxt(&grd);*/
-
-	/* Fenetre de depart */
-	/*ecranPrincipal("00:00","0000000");*/
 
 	secondes=0;
 	minutes=0;
 	temps=1;
 
 	/* Fenetre de depart */
-	pomme = ChargerSprite("./pomme.png");
-	tete = ChargerSprite("./snake.png");
-	terrain = ChargerSprite("./herbe.png");
-	ecranPrincipal("Appuyez sur espace pour commencer",grd.scoreTxt);
+	pomme = ChargerSprite("./img_pomme.png");
+	tete = ChargerSprite("./img_snake.png");
+	terrain = ChargerSprite("./img_herbe.png");
+	ecranPrincipal("Appuyez sur espace pour commencer",grd.scoreTxt,"\0");
 	afficheGrille(&grd, pomme, tete, terrain);
 
 	pause = 1; /* 0 pas en pause , 1 en pause */
@@ -93,9 +89,9 @@ int main(void) {
 					}
 					/* une periode s'est écoulé */
 					sprintf(tempsEcoule,"%02d:%02d",minutes,secondes);
-					ecranPrincipal(tempsEcoule,grd.scoreTxt);
+					ecranPrincipal(tempsEcoule,grd.scoreTxt,"Espace=Pause  ESC=quitter");
 					afficheGrille(&grd, pomme, tete, terrain);
-					/*majGrille(&grd, 0);*/  /*touche = 0, le serpent avance dans la même direction, grille mise a jour*/
+					/*touche = 0, le serpent avance dans la même direction, grille mise a jour*/
 					/* prochaine date */
 					suivant = Microsecondes()+CYCLE;
 				}
@@ -117,11 +113,11 @@ int main(void) {
 	}  
     
 	if(grd.collision == 1) {	/*Si collision, fin du jeu*/
-		ecranPrincipal("Perdu ! Taper ESC pour quitter.",grd.scoreTxt);
+		ecranPrincipal("Perdu ! Taper ESC pour quitter.",grd.scoreTxt,tempsEcoule);
 		afficheGrille(&grd, pomme, tete, terrain);
 	}
 	else {	/*Si le joeur appuie sur échap, fin du jeu*/
-		ecranPrincipal("Fin de la partie ! Taper ESC pour quitter.",grd.scoreTxt);
+		ecranPrincipal("Fin de la partie ! Taper ESC pour quitter.",grd.scoreTxt,tempsEcoule);
 		afficheGrille(&grd, pomme, tete, terrain);
 	}
 
@@ -130,7 +126,6 @@ int main(void) {
 	while(go_on) {
 		if(ToucheEnAttente()) {
 			touche = Touche();
-			/*printf("%d\n",touche);*/
 			/* on sort si ESC */
 			if(touche == XK_Escape) 
 			{
